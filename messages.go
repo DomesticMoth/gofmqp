@@ -50,6 +50,13 @@ type Message struct{
 }
 
 
+type IMsgReader interface {
+    NextRaw() (msg RawMessage, err error)
+    NextUnchecked() (msg Message, err error)
+    Next() (msg Message, err error)
+}
+
+
 type MsgReader struct{
 	input io.Reader
 	hbuf []byte
@@ -108,6 +115,12 @@ func (r *MsgReader) Next() (msg Message, err error) {
 }
 
 
+type IMsgWriter interface {
+    SendRaw(msg *RawMessage) (err error)
+    Send(msg *Message) (err error)
+}
+
+
 type MsgWriter struct{
 	out io.Writer
 	hbuf []byte
@@ -162,11 +175,3 @@ func (w *MsgWriter) Send(msg *Message) (err error) {
 	}
 	return w.SendRaw(&raw)
 }
-
-
-/*
-
-TODO Add unix socket, tcp and tls realisations
-
-*/
-
