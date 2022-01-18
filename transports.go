@@ -75,8 +75,19 @@ func Dial(network, address string, config *tls.Config) (conn Connection, err err
 		if err != nil { return conn, err }
 		return Connection{NewMsgReader(c), NewMsgWriter(c), c}, err
 	}
+	if network == "tls" {
+		c, err := tls.Dial(network, address, config)
+		if err != nil { return conn, err  }
+		return Connection{NewMsgReader(c), NewMsgWriter(c), c}, err
+	}
 	if strings.HasPrefix(network, "tls-") {
 		network = strings.TrimPrefix(network, "tls-")
+		c, err := tls.Dial(network, address, config)
+		if err != nil { return conn, err  }
+		return Connection{NewMsgReader(c), NewMsgWriter(c), c}, err
+	}
+	if strings.HasPrefix(network, "tls+") {
+		network = strings.TrimPrefix(network, "tls+")
 		c, err := tls.Dial(network, address, config)
 		if err != nil { return conn, err  }
 		return Connection{NewMsgReader(c), NewMsgWriter(c), c}, err
@@ -90,8 +101,19 @@ func Listen(network, laddr string, config *tls.Config) (listener Listener, err e
 		if err != nil { return listener, err }
 		return Listener{l}, err
 	}
+	if network == "tls" {
+		l, err := tls.Listen(network, laddr, config)
+		if err != nil { return listener, err }
+		return Listener{l}, err
+	}
 	if strings.HasPrefix(network, "tls-") {
 		network = strings.TrimPrefix(network, "tls-")
+		l, err := tls.Listen(network, laddr, config)
+		if err != nil { return listener, err }
+		return Listener{l}, err
+	}
+	if strings.HasPrefix(network, "tls+") {
+		network = strings.TrimPrefix(network, "tls+")
 		l, err := tls.Listen(network, laddr, config)
 		if err != nil { return listener, err }
 		return Listener{l}, err
