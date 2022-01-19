@@ -166,16 +166,33 @@ func (router *Router) Unsub(sub Id, topic MsgTopic){
 }
 
 func (router *Router) UnsubAll(sub Id){
+	_, exist := router.subs[sub]
+	if exist {
+		stopics := router.GetSubscriptions(sub)
+		for _, stopic := range stopics {
+			router.Unsub(sub, stopic)
+		}
+	}
+}
+
+func (router *Router) GetSubscriptions(sub Id) []MsgTopic{
 	subInf, exist := router.subs[sub]
 	if exist {
 		stopics:= make([]MsgTopic, 0, len(subInf.stopics))
     	for k := range subInf.stopics {
         	stopics = append(stopics, k)
     	}
-		for _, stopic := range stopics {
-			router.Unsub(sub, stopic)
-		}
+    	return stopics
+    }
+    return []MsgTopic{}
+}
+
+func (router *Router) SubscribersCount(stopic MsgTopic) int {
+	stopicInf, exist := router.stopics[stopic]
+	if exist {
+		return len(stopicInf.subs)
 	}
+	return 0
 }
 
 func (router *Router) Route(ptopic MsgTopic) map[Id]bool {
