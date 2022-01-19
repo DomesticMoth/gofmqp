@@ -20,7 +20,7 @@ type Cache struct{
 	messages map[MsgTopic]Message
 }
 
-func NewCahe() Cache {
+func NewCache() Cache {
 	return Cache{ make(map[MsgTopic]Message) }
 }
 
